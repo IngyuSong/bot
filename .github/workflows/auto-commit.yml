@@ -1,0 +1,30 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 매일 자정 (UTC 기준)
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Make changes
+        run: |
+          echo "Automated commit" >> automated_commit.txt
+
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Automated commit at $(date +'%Y-%m-%d %H:%M:%S')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
